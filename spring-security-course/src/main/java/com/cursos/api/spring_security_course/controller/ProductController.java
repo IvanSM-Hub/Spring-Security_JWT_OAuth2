@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("/categories")
+@RequestMapping("/products")
 public class ProductController {
 
     @Autowired
@@ -62,9 +62,9 @@ public class ProductController {
     }
 
     @PutMapping("/{productId}/disabled")
-    public ResponseEntity<Product> disableOneById( @PathVariable("productId") Long id, @RequestBody @Valid SaveProductDto saveProductDto ) {
+    public ResponseEntity<Product> disableOneById( @PathVariable("productId") Long id ) {
 
-        Product product = productService.updateOneById( id, saveProductDto );
+        Product product = productService.disableOneById( id );
 
         return ResponseEntity.ok( product );
 

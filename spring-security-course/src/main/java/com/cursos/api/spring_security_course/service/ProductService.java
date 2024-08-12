@@ -19,4 +19,5 @@ public interface ProductService {
 
     Product updateOneById(Long id, SaveProductDto saveProductDto);
 
+    Product disableOneById(Long id);
 }

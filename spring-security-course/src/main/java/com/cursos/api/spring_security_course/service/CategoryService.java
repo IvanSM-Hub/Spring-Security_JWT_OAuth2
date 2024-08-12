@@ -19,4 +19,5 @@ public interface CategoryService {
 
     Category updateOneById(Long id, SaveCategoryDto saveCategoryDto);
 
+    Category disableOneById(Long id);
 }

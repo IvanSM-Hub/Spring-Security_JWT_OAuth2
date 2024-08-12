@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 
 public class SaveProductDto implements Serializable {
 
-    @NotBlank
+    @NotBlank(message = "Name can't be blank")
     private String name;
 
     @DecimalMin(value = "0.01")

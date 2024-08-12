@@ -62,9 +62,9 @@ public class CategoryController {
     }
 
     @PutMapping("/{categoryId}/disabled")
-    public ResponseEntity<Category> disableOneById( @PathVariable("categoryId") Long id, @RequestBody @Valid SaveCategoryDto saveCategoryDto ) {
+    public ResponseEntity<Category> disableOneById( @PathVariable("categoryId") Long id ) {
 
-        Category category = categoryService.updateOneById( id, saveCategoryDto );
+        Category category = categoryService.disableOneById( id );
 
         return ResponseEntity.ok( category );
 
