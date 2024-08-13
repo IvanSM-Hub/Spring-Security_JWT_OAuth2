@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +23,7 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('READ_ALL_PRODUCTS')")
     public ResponseEntity<Page<Product>> findAll(Pageable pageable) {
 
         Page<Product> productsPage = productService.findAll(pageable);
@@ -33,6 +35,7 @@ public class ProductController {
     }
 
     @GetMapping("/{productId}")
+    @PreAuthorize("hasAuthority('READ_ONE_PRODUCT')")
     public ResponseEntity<Product> findOneById( @PathVariable("productId") Long id ) {
 
         Optional<Product> product = productService.findOneById( id );
@@ -44,6 +47,7 @@ public class ProductController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('CREATE_ONE_PRODUCT')")
     public ResponseEntity<Product> createOne( @RequestBody @Valid SaveProductDto saveProductDto ) {
 
         Product product = productService.createOne( saveProductDto );
@@ -53,6 +57,7 @@ public class ProductController {
     }
 
     @PutMapping("/{productId}")
+    @PreAuthorize("hasAuthority('UPDATE_ONE_PRODUCT')")
     public ResponseEntity<Product> updateOneById( @PathVariable("productId") Long id, @RequestBody @Valid SaveProductDto saveProductDto ) {
 
         Product product = productService.updateOneById( id, saveProductDto );
@@ -62,6 +67,7 @@ public class ProductController {
     }
 
     @PutMapping("/{productId}/disabled")
+    @PreAuthorize("hasAuthority('DISABLE_ONE_PRODUCT')")
     public ResponseEntity<Product> disableOneById( @PathVariable("productId") Long id ) {
 
         Product product = productService.disableOneById( id );

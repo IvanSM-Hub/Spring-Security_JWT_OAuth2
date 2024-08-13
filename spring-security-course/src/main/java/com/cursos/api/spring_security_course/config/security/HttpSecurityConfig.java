@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
@@ -17,6 +18,7 @@ import org.springframework.security.web.util.matcher.RegexRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 public class HttpSecurityConfig {
 
     @Autowired
@@ -32,14 +34,25 @@ public class HttpSecurityConfig {
                 .sessionManagement( sessMagConfig -> sessMagConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS) )
                 .authenticationProvider(daoAuthenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .authorizeHttpRequests( authReqConfig -> buildRequestMartchers(authReqConfig) )
+                /*.authorizeHttpRequests( authReqConfig -> buildRequestMartchersV2(authReqConfig) )*/
                 .build();
 
         return filterChain;
 
     }
 
-    private static void buildRequestMartchers
+    private static void buildRequestMartchersV2
+            (AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry authReqConfig) {
+
+        // Authorizations públicas
+        authReqConfig.requestMatchers(HttpMethod.POST,"/costumers").permitAll();
+        authReqConfig.requestMatchers(HttpMethod.POST,"/auth/authenticate").permitAll();
+        authReqConfig.requestMatchers(HttpMethod.GET,"/auth/validate-token").permitAll();
+
+        authReqConfig.anyRequest().authenticated();
+    }
+
+    /*private static void buildRequestMartchers
             (AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry authReqConfig) {
 
         // Authorization de endpoints de products
@@ -114,7 +127,6 @@ public class HttpSecurityConfig {
         authReqConfig.requestMatchers(HttpMethod.GET,"/auth/validate-token").permitAll();
 
         authReqConfig.anyRequest().authenticated();
-    }
-
+    }*/
 
 }

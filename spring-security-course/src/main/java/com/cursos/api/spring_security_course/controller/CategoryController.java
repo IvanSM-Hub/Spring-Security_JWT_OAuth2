@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +23,7 @@ public class CategoryController {
     private CategoryService categoryService;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('READ_ALL_CATEGORIES')")
     public ResponseEntity<Page<Category>> findAll(Pageable pageable) {
 
         Page<Category> categoryPage = categoryService.findAll(pageable);
@@ -33,6 +35,7 @@ public class CategoryController {
     }
 
     @GetMapping("/{categoryId}")
+    @PreAuthorize("hasAuthority('READ_ONE_CATEGORY')")
     public ResponseEntity<Category> findOneById( @PathVariable("categoryId") Long id ) {
 
         Optional<Category> category = categoryService.findOneById( id );
@@ -44,6 +47,7 @@ public class CategoryController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('CREATE_ONE_CATEGORY')")
     public ResponseEntity<Category> createOne( @RequestBody @Valid SaveCategoryDto saveCategoryDto ) {
 
         Category category = categoryService.createOne( saveCategoryDto );
@@ -53,6 +57,7 @@ public class CategoryController {
     }
 
     @PutMapping("/{categoryId}")
+    @PreAuthorize("hasAuthority('UPDATE_ONE_CATEGORY')")
     public ResponseEntity<Category> updateOneById( @PathVariable("categoryId") Long id, @RequestBody @Valid SaveCategoryDto saveCategoryDto ) {
 
         Category category = categoryService.updateOneById( id, saveCategoryDto );
@@ -62,6 +67,7 @@ public class CategoryController {
     }
 
     @PutMapping("/{categoryId}/disabled")
+    @PreAuthorize("hasAuthority('DISABLE_ONE_CATEGORY')")
     public ResponseEntity<Category> disableOneById( @PathVariable("categoryId") Long id ) {
 
         Category category = categoryService.disableOneById( id );
