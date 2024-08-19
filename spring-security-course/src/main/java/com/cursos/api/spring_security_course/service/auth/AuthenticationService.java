@@ -5,7 +5,7 @@ import com.cursos.api.spring_security_course.dto.auth.AuthenticationResponseDto;
 import com.cursos.api.spring_security_course.dto.RegisterUserDto;
 import com.cursos.api.spring_security_course.dto.SaveUserDto;
 import com.cursos.api.spring_security_course.exception.ObjectNotFoundException;
-import com.cursos.api.spring_security_course.persistence.entity.User;
+import com.cursos.api.spring_security_course.persistence.entity.security.User;
 import com.cursos.api.spring_security_course.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -36,18 +36,13 @@ public class AuthenticationService {
         User user = userService.registerOneCostumer(saveUserDto);
 
 //        DTO que se le va a devolver a la respuesta
-        RegisterUserDto userDto = RegisterUserDto.builder()
+        return RegisterUserDto.builder()
                 .id(user.getId())
                 .name(user.getName())
                 .username(user.getUsername())
-                .role(user.getRole().name())
+                .role(user.getRole().getName())
+                .jwt(jwtService.generateToken(user, generateExtraClaims(user)))
                 .build();
-
-//        Generación del Token
-        String jwt = jwtService.generateToken(user, generateExtraClaims(user));
-        userDto.setJwt(jwt);
-
-        return userDto;
     }
 
     private Map<String, Object> generateExtraClaims(User user) {
@@ -55,7 +50,7 @@ public class AuthenticationService {
         Map<String, Object> extraClaims = new HashMap<>();
 
         extraClaims.put("name",user.getName());
-        extraClaims.put("role",user.getRole().name());
+        extraClaims.put("role",user.getRole().getName());
         extraClaims.put("authorities",user.getAuthorities());
 
         return extraClaims;

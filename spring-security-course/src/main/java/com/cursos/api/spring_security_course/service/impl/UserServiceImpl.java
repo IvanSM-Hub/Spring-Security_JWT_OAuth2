@@ -2,24 +2,25 @@ package com.cursos.api.spring_security_course.service.impl;
 
 import com.cursos.api.spring_security_course.dto.SaveUserDto;
 import com.cursos.api.spring_security_course.exception.InvalidPasswordException;
-import com.cursos.api.spring_security_course.persistence.entity.User;
+import com.cursos.api.spring_security_course.exception.ObjectNotFoundException;
+import com.cursos.api.spring_security_course.persistence.entity.security.Role;
+import com.cursos.api.spring_security_course.persistence.entity.security.User;
 import com.cursos.api.spring_security_course.persistence.repository.UserRepository;
+import com.cursos.api.spring_security_course.service.RoleService;
 import com.cursos.api.spring_security_course.service.UserService;
-import com.cursos.api.spring_security_course.util.Role;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final RoleService roleService;
 
     @Override
     public User registerOneCostumer(SaveUserDto saveUserDto) {
@@ -32,8 +33,9 @@ public class UserServiceImpl implements UserService {
         user.setName(saveUserDto.getName());
         user.setPassword(passwordEncoder.encode(saveUserDto.getPassword()));
         user.setUsername(saveUserDto.getUsername());
-        user.setRole(Role.COSTUMER);
-
+        Role defaultRole = roleService.findDefaultRole()
+                .orElseThrow( () -> new ObjectNotFoundException("Role not found. Default role.") );
+        user.setRole(defaultRole);
 //        Guardado Usuario en BBDD Role COSTUMER
         return userRepository.save(user);
     }

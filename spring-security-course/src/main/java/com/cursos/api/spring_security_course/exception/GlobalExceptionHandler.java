@@ -4,6 +4,7 @@ import com.cursos.api.spring_security_course.dto.ApiError;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -35,7 +36,20 @@ public class GlobalExceptionHandler {
                 .message("Error en la petición enviada")
                 .timestamp(LocalDateTime.now())
                 .build();
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiError);
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(apiError);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<?> handlerAccessDeniedException(HttpServletRequest request, AccessDeniedException exception) {
+        ApiError apiError = ApiError.builder()
+                .backendMessage(exception.getLocalizedMessage())
+                .url(request.getRequestURL().toString())
+                .method(request.getMethod())
+                .message("Acceso denegado. No tienes los permisos necesarios para acceder a esta función. " +
+                        "Por favor, contacta al administrador si crees que esto es un error.")
+                .timestamp(LocalDateTime.now())
+                .build();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiError);
     }
 
 }

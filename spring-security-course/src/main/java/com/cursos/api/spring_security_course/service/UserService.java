@@ -1,8 +1,7 @@
 package com.cursos.api.spring_security_course.service;
 
 import com.cursos.api.spring_security_course.dto.SaveUserDto;
-import com.cursos.api.spring_security_course.persistence.entity.User;
-import org.springframework.stereotype.Service;
+import com.cursos.api.spring_security_course.persistence.entity.security.User;
 
 import java.util.Optional;
 
